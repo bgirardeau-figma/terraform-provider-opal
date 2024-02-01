@@ -375,8 +375,12 @@ func resourceResourceUpdateVisibility(ctx context.Context, d *schema.ResourceDat
 func resourceResourceRead(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	client := m.(*opal.APIClient)
 
-	resource, _, err := client.ResourcesApi.GetResource(ctx, d.Id()).Execute()
+	resource, r, err := client.ResourcesApi.GetResource(ctx, d.Id()).Execute()
 	if err != nil {
+		if r.StatusCode == 404 {
+			d.SetId("")
+			return nil
+		}
 		return diagFromErr(ctx, err)
 	}
 

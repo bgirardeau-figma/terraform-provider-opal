@@ -553,6 +553,10 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, m any) diag.
 	if err != nil {
 		return diagFromErr(ctx, err)
 	}
+	if len(groups.Results) == 0 {
+		d.SetId("")
+		return nil
+	}
 	if len(groups.Results) != 1 {
 		return diagFromErr(ctx, fmt.Errorf("expected 1 group returned but got %d", len(groups.Results)))
 	}
